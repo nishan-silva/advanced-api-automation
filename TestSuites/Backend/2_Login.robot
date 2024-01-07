@@ -27,7 +27,10 @@ POST /api/auth/otp/request
 
     #    3. Call the keyword to validate the response parameter and its expected value
 
-       Backend_CommonKeywords.Response_Validation_Parameters
+    ${request_headers}=    Backend_CommonKeywords.Onboarding_Headers
+    ${response}=    Backend_CommonKeywords.Calling_API_POST    POST    ${BACKEND_URL}/api/auth/otp/verify     ${expected_status_code}    ${data}    ${request_headers}    ${TIMEOUT}
+    ${DATA_OTP_VERIFY}=    Capture_DATA_If_Available    ${response}  # Capture OTP data from the response if available
+    Set Global Variable    ${DATA_OTP_VERIFY}
 
     #    5. Evaluate the response content as JSON
 
