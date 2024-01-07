@@ -1,0 +1,4 @@
+--variable TESTING_WORKSPACE:/advanced-api-automation
+--variable ENV_BACKEND_PROTOCOL:http
+--variable ENV_BACKEND_HOST:abc.com
+--variable ENV_BACKEND_PORT:8080

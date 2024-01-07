@@ -1,0 +1,14 @@
+# Ignore Robot Framework generated files
+.DS_Store
+log.html
+output.xml
+report.html
+__pycache__
+*.png
+interactive_console_output.xml
+# Ignore IDE-specific files
+*vscode*
+.idea
+# Application specific files
+*.apk
+*.ipa
