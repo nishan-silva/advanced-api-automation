@@ -125,10 +125,10 @@ Capture_Access_Token_If_Available
     [Return]    ${data_otp_verify}
 
 Response_Validation_Parameters
-    [Arguments]    @{expected_values}
-        ${length}=    Get Length    ${expected_values}
-    FOR    ${index}    IN RANGE    0    ${length}    2
+    [Arguments]    ${response_content}    @{expected_values}
+    ${length}=    Get Length    ${expected_values}
+        FOR    ${index}    IN RANGE    0    ${length}    2
         ${expected_param}=    Set Variable    ${expected_values}[${index}]
         ${expected_value}=    Set Variable    ${expected_values}[${index + 1}]
-        Backend_CommonKeywords.Validating_Response_Message    ${response.content}    ${expected_param}    ${expected_value}
-    END
+        Backend_CommonKeywords.Validating_Response_Message    ${response_content}    ${expected_param}    ${expected_value}
+        END

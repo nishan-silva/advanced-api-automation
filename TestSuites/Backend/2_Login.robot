@@ -27,12 +27,7 @@ POST /api/auth/otp/request
 
     #    3. Call the keyword to validate the response parameter and its expected value
 
-    ${length}=    Get Length    ${expected_values}
-    FOR    ${index}    IN RANGE    0    ${length}    2
-        ${expected_param}=    Set Variable    ${expected_values}[${index}]
-        ${expected_value}=    Set Variable    ${expected_values}[${index + 1}]
-        Backend_CommonKeywords.Validating_Response_Message    ${response.content}    ${expected_param}    ${expected_value}
-    END
+     Backend_CommonKeywords.Response_Validation_Parameters    ${response}
 
     #    5. Evaluate the response content as JSON
 
@@ -62,12 +57,7 @@ POST /api/auth/otp/verify
 
     #    3. Call the keyword to validate the response parameter and its expected value
 
-    ${length}=    Get Length    ${expected_values}
-    FOR    ${index}    IN RANGE    0    ${length}    2
-        ${expected_param}=    Set Variable    ${expected_values}[${index}]
-        ${expected_value}=    Set Variable    ${expected_values}[${index + 1}]
-        Backend_CommonKeywords.Validating_Response_Message    ${response.content}    ${expected_param}    ${expected_value}
-    END
+     Backend_CommonKeywords.Response_Validation_Parameters    ${response}
 
 POST /api/auth/nic/validate
     [Documentation]    This API will be used to validate NIC
@@ -88,12 +78,7 @@ POST /api/auth/nic/validate
 
     #    3. Call the keyword to validate the response parameter and its expected value
 
-    ${length}=    Get Length    ${expected_values}
-    FOR    ${index}    IN RANGE    0    ${length}    2
-        ${expected_param}=    Set Variable    ${expected_values}[${index}]
-        ${expected_value}=    Set Variable    ${expected_values}[${index + 1}]
-        Backend_CommonKeywords.Validating_Response_Message    ${response.content}    ${expected_param}    ${expected_value}
-    END
+     Backend_CommonKeywords.Response_Validation_Parameters    ${response}
     
 
 POST /api/auth/oauth/token
@@ -115,12 +100,7 @@ POST /api/auth/oauth/token
 
     #    3. Call the keyword to validate the response parameter and its expected value
 
-    ${length}=    Get Length    ${expected_values}
-    FOR    ${index}    IN RANGE    0    ${length}    2
-        ${expected_param}=    Set Variable    ${expected_values}[${index}]
-        ${expected_value}=    Set Variable    ${expected_values}[${index + 1}]
-        Backend_CommonKeywords.Validating_Response_Message    ${response.content}    ${expected_param}    ${expected_value}
-    END
+     Backend_CommonKeywords.Response_Validation_Parameters    ${response}
 
 *** Test Cases ***
 POST /api/auth/otp/request - Fail - Invalid mandatory parameters
