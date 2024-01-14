@@ -1,13 +1,16 @@
 *** Settings ***
 Documentation       Test Genie Onboarding API's
 
-Library    RequestsLibrary
+Suite Setup         DatabaseKeywords.Connecting_To_Database
+Suite Teardown      Disconnect From Database
+
+Library    RequestsLibrary    #https://marketsquare.github.io/robotframework-requests/doc/RequestsLibrary.html#library-documentation-top
 Library    Collections
 Library    OperatingSystem
 Library    String
 Library    JSONLibrary
 Resource    ../../KeywordLibraries/Backend/Backend_CommonKeywords.robot
-Resource    ../../KeywordLibraries/Backend/Backend_CommonKeywords.robot
+Resource    ../../KeywordLibraries/Backend/DatabaseKeywords.robot
 
 *** Keywords ***
 
@@ -27,7 +30,7 @@ POST /api/auth/otp/request
 
     #    3. Call the keyword to validate the response parameter and its expected value
 
-     Backend_CommonKeywords.Response_Validation_Parameters    ${response}
+    Backend_CommonKeywords.Response_Validation_Parameters    ${response.content}    ${expected_values}
 
     #    5. Evaluate the response content as JSON
 
@@ -37,7 +40,6 @@ POST /api/auth/otp/request
 
         Run Keyword If    'REMAINING_TIME' in ${json_data}    Set_Remaining_Time_Variable    ${json_data}
         Run Keyword If    'REMAINING_TIME' in ${json_data}    Wait_For_Remaining_Time    ${json_data["REMAINING_TIME"]}
-
 
 POST /api/auth/otp/verify
     [Documentation]    This API will be used to validate OTP
@@ -57,7 +59,7 @@ POST /api/auth/otp/verify
 
     #    3. Call the keyword to validate the response parameter and its expected value
 
-     Backend_CommonKeywords.Response_Validation_Parameters    ${response}
+    Backend_CommonKeywords.Response_Validation_Parameters    ${response.content}    ${expected_values}
 
 POST /api/auth/nic/validate
     [Documentation]    This API will be used to validate NIC
@@ -78,7 +80,7 @@ POST /api/auth/nic/validate
 
     #    3. Call the keyword to validate the response parameter and its expected value
 
-     Backend_CommonKeywords.Response_Validation_Parameters    ${response}
+    Backend_CommonKeywords.Response_Validation_Parameters    ${response.content}    ${expected_values}
     
 
 POST /api/auth/oauth/token
@@ -100,9 +102,18 @@ POST /api/auth/oauth/token
 
     #    3. Call the keyword to validate the response parameter and its expected value
 
-     Backend_CommonKeywords.Response_Validation_Parameters    ${response}
+    Backend_CommonKeywords.Response_Validation_Parameters    ${response.content}    ${expected_values}
 
 *** Test Cases ***
+
+Resetting_User_Status
+    [Tags]    Login    Dashboard    Regression    DB
+    Execute SQL String    UPDATE fintech_user_status SET status = '5' WHERE mobile_number = '${LOGIN_MOBILE_NUMBER}'
+    Execute SQL String    UPDATE pins SET pin_attempt_count = '0' WHERE nic = '${LOGIN_NIC}'
+    Execute SQL String    UPDATE otp_requests SET request_count = '0' WHERE mobile_number = '${LOGIN_MOBILE_NUMBER}' AND device_id = '${LOGIN_DEVICE_ID}'
+    Execute SQL String    UPDATE otp_requests SET created_date = '2024-01-12 18:53:21.561' WHERE mobile_number = '${LOGIN_MOBILE_NUMBER}' AND device_id = '${LOGIN_DEVICE_ID}'
+    Execute SQL String    UPDATE pin_otp_requests SET otp_request_count = '0' WHERE mobile_number = '${LOGIN_MOBILE_NUMBER}'
+
 POST /api/auth/otp/request - Fail - Invalid mandatory parameters
     [Documentation]    Failure
     [Tags]    Login    Dashboard    Regression
@@ -250,10 +261,16 @@ POST /api/auth/oauth/token - Fail
     ...    error                          invalid_request
     ...    error_description              Invalid PIN. Next invalid attempt will block you.
 
-        #${LOGIN_ACCESS_TOKEN_INVALID_PIN}    401
-    #...    error    invalid_request
-    #...    error_description        Your account has been blocked due to multiple failed attempts.
-   
+        ${LOGIN_ACCESS_TOKEN_INVALID_PIN}    401
+    ...    error                          invalid_request
+    ...    error_description              Your account has been blocked due to multiple failed attempts.|60
+
+Resetting_User_Status_After_PIN_Block
+    [Tags]    Login    Dashboard    Regression    DB
+    Query    SELECT * FROM fintech_user_status WHERE mobile_number = '${LOGIN_MOBILE_NUMBER}';
+    Execute SQL String    UPDATE fintech_user_status SET status = '5' WHERE mobile_number = '${LOGIN_MOBILE_NUMBER}'
+    Execute SQL String    UPDATE pins SET pin_attempt_count = '0' WHERE nic = '${LOGIN_NIC}'
+
 POST /api/auth/oauth/token - Success
     [Tags]    Login    Dashboard    Regression
     [Template]    POST /api/auth/oauth/token
