@@ -1,151 +1,227 @@
 *** Settings ***
 Documentation       Test Genie Onboarding API's
 
-Library    RequestsLibrary
+Suite Setup         DatabaseKeywords.Connecting_To_Database
+Suite Teardown      Disconnect From Database
+
+Library    RequestsLibrary    #https://marketsquare.github.io/robotframework-requests/doc/RequestsLibrary.html#library-documentation-top
 Library    Collections
 Library    OperatingSystem
 Library    String
 Library    JSONLibrary
 Library    Process
 Resource    ../../KeywordLibraries/Backend/Backend_CommonKeywords.robot
+Resource    ../../KeywordLibraries/Backend/DatabaseKeywords.robot
 
 *** Variables ***
 
-*** Test Cases ***
-POST /api/auth/otp/request - Success
-    [Tags]    Onboarding    Dashboard    Regression
+*** Keywords ***
+
+POST /api/auth/otp/request
+    [Documentation]    This API will be used to call OTP
+    
+    Set Log Level    TRACE
+
+    [Arguments]    ${data}    ${expected_status_code}    ${parameter_name}    ${expected_value}    @{expected_values}
 
     #    1. Send request: POST /api/auth/otp/request
 	#    2. Verify response status code: 200
-    
-    ${request_headers}=    Backend_CommonKeywords.Onboarding_Headers
-    ${response}=    Backend_CommonKeywords.Calling_API_POST    POST    ${BACKEND_URL}/api/auth/otp/request    200    ${ONBOARDING_OTP_REQUEST}    ${request_headers}   ${TIMEOUT}
-    Response Logs    ${response.status_code}    ${response.content}
 
-    #    3. Verify json response body message: MESSAGE: OTP_SEND_SUCCESS
+        ${request_headers}=    Backend_CommonKeywords.Onboarding_Headers
+	    ${response}=    Backend_CommonKeywords.Calling_API_POST    POST    ${BACKEND_URL}/api/auth/otp/request    ${expected_status_code}    ${data}    ${request_headers}    ${TIMEOUT}
+        Response Logs    ${response.status_code}    ${response.content}
 
-    Backend_CommonKeywords.Validating_Response_Message    ${response.content}    MESSAGE    OTP_SEND_SUCCESS
+    #    3. Call the keyword to validate the response parameter and its expected value
 
-POST /api/auth/otp/verify - Success
-    [Tags]    Onboarding    Dashboard    Regression
+    Backend_CommonKeywords.Response_Validation_Parameters    ${response.content}    ${expected_values}
+
+    #    5. Evaluate the response content as JSON
+
+        ${json_data}=    Evaluate    json.loads('''${response.content}''')
+
+    #    6. If 'REMAINING_TIME' is present in the JSON data, execute the following keywords
+
+        Run Keyword If    'REMAINING_TIME' in ${json_data}    Set_Remaining_Time_Variable    ${json_data}
+        Run Keyword If    'REMAINING_TIME' in ${json_data}    Wait_For_Remaining_Time    ${json_data["REMAINING_TIME"]}
+
+POST /api/auth/otp/verify
+    [Documentation]    This API will be used to validate OTP
+
+    Set Log Level    TRACE
+
+    [Tags]    Login    Dashboard    Regression
+    [Arguments]    ${data}     ${expected_status_code}    ${parameter_name}    ${expected_value}    @{expected_values}
 
     #    1. Send request: POST /api/auth/otp/verify
 	#    2. Verify response status code: 200
 
     ${request_headers}=    Backend_CommonKeywords.Onboarding_Headers
-    ${response}=    Backend_CommonKeywords.Calling_API_POST    POST    ${BACKEND_URL}/api/auth/otp/verify    200    ${ONBOARDING_OTP_VALIDATE}    ${request_headers}    ${TIMEOUT}
+    ${response}=    Backend_CommonKeywords.Calling_API_POST    POST    ${BACKEND_URL}/api/auth/otp/verify     ${expected_status_code}    ${data}    ${request_headers}    ${TIMEOUT}
+    ${DATA_OTP_VERIFY_ONBOARDING}=    Capture_DATA_If_Available    ${response}  # Capture OTP data from the response if available
+    Set Global Variable    ${DATA_OTP_VERIFY_ONBOARDING}
 
-    #    3. Verify json response body message: MESSAGE: OTP_VERIFICATION_SUCCESS
+    #    3. Call the keyword to validate the response parameter and its expected value
 
-    Backend_CommonKeywords.Validating_Response_Message    ${response.content}    MESSAGE    OTP_VERIFICATION_SUCCESS
+    Backend_CommonKeywords.Response_Validation_Parameters    ${response.content}    ${expected_values}
 
-    #    4. Parse JSON response for ${response.content} into a Python dictionary
-    #    5. Extract the DATA value
+POST /api/auth/nic/validate
+    [Documentation]    This API will be used to validate NIC
 
-    ${json_data}=    Evaluate    json.loads('''${response.content}''')
-    ${DATA}=    Set Variable    ${json_data["DATA"]}
+    Set Log Level    TRACE
 
-    #    6. Set ${DATA_OTP_VERIFY} as a global variable
+    [Tags]    Login    Dashboard    Regression
+    [Arguments]    ${data}    ${expected_status_code}    ${parameter_name}    ${expected_value}    @{expected_values}
 
-    Set Global Variable    ${DATA_OTP_VERIFY}    ${DATA}
-    Log    ${DATA_OTP_VERIFY}
-
-    #    7. Update the request_token field in the NIC_VALIDATE dictionary with the value of ${DATA_OTP_VERIFY}
-        
-    Set To Dictionary    ${ONBOARDING_NIC_VALIDATE}    request_token=${DATA_OTP_VERIFY}
-
-POST /api/auth/nic/validate - Success
-    [Tags]    Onboarding    Dashboard    Regression
-
-    #    1. Send request: POST /api/auth/nic/validate
+    #    1. Send request: POST /api/auth/otp/verify
 	#    2. Verify response status code: 200
 
+    Run Keyword If    "${DATA_OTP_VERIFY_ONBOARDING}" != "None"    Set To Dictionary    ${data}    request_token=${DATA_OTP_VERIFY_ONBOARDING}
     ${request_headers}=    Backend_CommonKeywords.Onboarding_Headers
-    ${response}=    Backend_CommonKeywords.Calling_API_POST    POST    ${BACKEND_URL}/api/auth/nic/validate    200    ${ONBOARDING_NIC_VALIDATE}       ${request_headers}    ${TIMEOUT}
+    ${response}=    Backend_CommonKeywords.Calling_API_POST    POST    ${BACKEND_URL}/api/auth/nic/validate    ${expected_status_code}    ${data}       ${request_headers}    ${TIMEOUT}
+    ${DATA_NIC_VERIFY_ONBOARDING}=    Capture DATA If Available    ${response}  # Capture OTP data from the response if available
+    Set Global Variable    ${DATA_NIC_VERIFY_ONBOARDING}
 
-    #    3. Verify json response body message: MESSAGE: PIN_GENERATE_SUCCESS
+    #    3. Call the keyword to validate the response parameter and its expected value
 
-    Backend_CommonKeywords.Validating_Response_Message    ${response.content}    STATUS    SUCCESS
-
-    #    4. Parse JSON response for ${response.content} into a Python dictionary
-    #    5. Extract the DATA value
-
-    ${json_data}=    Evaluate    json.loads('''${response.content}''')
-    ${DATA}=    Set Variable    ${json_data["DATA"]}
-
-    #    6. Set ${DATA_OTP_VERIFY} as a global variable
-
-    Set Global Variable    ${DATA_NIC_VERIFY}    ${DATA}
-    Log    ${DATA_NIC_VERIFY}
-
-    #    7. Update the request_token field in the NIC_VALIDATE dictionary with the value of ${DATA_NIC_VERIFY}
-
-    Set To Dictionary    ${ONBOARDING_ACCESS_TOKEN}        request_token=${DATA_NIC_VERIFY}
-    Set To Dictionary    ${ONBOARDING_PIN_CREATE}          request_token=${DATA_NIC_VERIFY}
-
-POST /api/auth/pin
-    [Tags]    Onboarding    Regression
-
-    #    1. Send request: POST /api/auth/pin
-	#    2. Verify response status code: 200
-
-    ${request_headers}=    Backend_CommonKeywords.Onboarding_Headers
-    ${response}=    Backend_CommonKeywords.Calling_API_POST    POST    ${BACKEND_URL}/api/auth/pin    200    ${ONBOARDING_PIN_CREATE}    ${request_headers}    ${TIMEOUT}
-    Response Logs    ${response.status_code}    ${response.content}
-
-    #    3. Verify json response body message: MESSAGE: PIN_GENERATE_SUCCESS
-
-    Backend_CommonKeywords.Validating_Response_Message    ${response.content}    MESSAGE    PIN_GENERATE_SUCCESS
-
-POST /api/auth/app/version?installedVersion=0.3.40
-    [Tags]    Onboarding    Regression
-
-    #    1. Send request: POST /api/auth/app/version?installedVersion=0.3.40
-	#    2. Verify response status code: 200
-
-    ${request_headers}=    Backend_CommonKeywords.Onboarding_Headers
-    ${response}=    Backend_CommonKeywords.Calling_API_GET    GET    ${BACKEND_URL}/api/auth/app/version?installedVersion=0.3.40    200    ${request_headers}    ${timeout}
+    Backend_CommonKeywords.Response_Validation_Parameters    ${response.content}    ${expected_values}
     
-    #    3. Verify json response body message: STATUS: SUCCESS
+POST /api/auth/pin
+    [Documentation]    This API will be used to create app PIN
 
-    Backend_CommonKeywords.Validating_Response_Message    ${response.content}    STATUS    SUCCESS
+    Set Log Level    TRACE
+
+    [Tags]    Login    Dashboard    Regression
+    [Arguments]    ${data}    ${expected_status_code}    ${parameter_name}    ${expected_value}    @{expected_values}
+
+    #    1. Send request: POST /api/auth/otp/verify
+	#    2. Verify response status code: 200
+
+    Run Keyword If    "${DATA_NIC_VERIFY_ONBOARDING}" != "None"    Set To Dictionary    ${data}    request_token=${DATA_NIC_VERIFY_ONBOARDING}
+    ${request_headers}=    Backend_CommonKeywords.Onboarding_Headers
+    ${response}=    Backend_CommonKeywords.Calling_API_POST    POST    ${BACKEND_URL}/api/auth/pin    ${expected_status_code}    ${data}       ${request_headers}    ${TIMEOUT}
+    ${DATA_PIN_VERIFY}=    Capture DATA If Available    ${response}  # Capture OTP data from the response if available
+    Set Global Variable    ${DATA_PIN_VERIFY}
+
+    #    3. Call the keyword to validate the response parameter and its expected value
+
+    Backend_CommonKeywords.Response_Validation_Parameters    ${response.content}    ${expected_values}
 
 POST /api/auth/oauth/token
-    [Tags]    Onboarding    Regression
+    [Documentation]    This API will be used to validate PIN and retrieve app token
 
-    #    1. Send request: POST /api/auth/oauth/token
+    Set Log Level    TRACE
+
+    [Tags]    Login    Dashboard    Regression
+    [Arguments]    ${data}    ${expected_status_code}    ${parameter_name}    ${expected_value}    @{expected_values}
+
+    #    1. Send request: POST /api/auth/otp/verify
 	#    2. Verify response status code: 200
 
+    Run Keyword If    "${DATA_NIC_VERIFY_ONBOARDING}" != "None"    Set To Dictionary    ${data}    request_token=${DATA_NIC_VERIFY_ONBOARDING}
     ${request_headers}=    Backend_CommonKeywords.Onboarding_Headers
-    ${response}=    Backend_CommonKeywords.Calling_API_POST    POST    ${BACKEND_URL}/api/auth/oauth/token    200     ${ONBOARDING_CRM_ACCESS_TOKEN}    ${request_headers}    ${timeout}
+    ${response}=    Backend_CommonKeywords.Calling_API_POST    POST    ${BACKEND_URL}/api/auth/oauth/token    ${expected_status_code}    ${data}    ${request_headers}    ${TIMEOUT}
+    ${APP_TOKEN_ONBOARDING}=    Capture access token If Available    ${response}  # Capture OTP data from the response if available
+    Set Global Variable    ${APP_TOKEN_ONBOARDING}
 
-        #    3. Verify json response body message: scope: scope
+    #    3. Call the keyword to validate the response parameter and its expected value
 
-    Backend_CommonKeywords.Validating_Response_Message    ${response.content}    scope    read
+    Backend_CommonKeywords.Response_Validation_Parameters    ${response.content}    ${expected_values}
 
-    #    4. Parse JSON response for ${response.content} into a Python dictionary
-    #    5. Extract the access_token value
+*** Test Cases ***
 
-    ${json_data}=    Evaluate    json.loads('''${response.content}''')
-    ${DATA}=    Set Variable    ${json_data["access_token"]}
+Deleting_user_if_available
+    [Documentation]    
+    ...    Removing data from fintech_user_status table
+    ...    Removing data from fintech_users table
+    ...    Removing data from otp_requests table
+    ...    Removing data from pin_otp_requests table
+    ...    Removing data from user_token table
+    ...    Removing data from pins table
 
-    #    6. Set ${APP_TOKEN} as a global variable
+    [Tags]    Login    Dashboard    Regression    DB
 
-    Set Global Variable    ${CRM_TOKEN}    ${DATA}
-    Log    ${CRM_TOKEN}
+    Execute SQL String    DELETE FROM fintech_user_status WHERE mobile_number = '${ONBOARDING_MOBILE_NUMBER}'
+    Execute SQL String    DELETE FROM fintech_users WHERE mobile_number = '${ONBOARDING_MOBILE_NUMBER}'
+    Execute SQL String    DELETE FROM otp_requests WHERE mobile_number = '${ONBOARDING_MOBILE_NUMBER}'
+    Execute SQL String    DELETE FROM pin_otp_requests WHERE mobile_number = '${ONBOARDING_MOBILE_NUMBER}'
+    Execute SQL String    DELETE FROM user_token WHERE mobile_number = '${ONBOARDING_MOBILE_NUMBER}'
+    Execute SQL String    DELETE FROM pins WHERE nic = '${ONBOARDING_NIC}'
 
+POST /api/auth/otp/request - Success
+    [Documentation]    Send request with correct data and verify response and status code
+    [Tags]    Login    Dashboard    Regression
+    [Template]    POST /api/auth/otp/request
 
-POST /api/auth/admin/delete/basic/customer
-    [Tags]    Onboarding    Regression
+   ${ONBOARDING_OTP_REQUEST}    200
+   ...    Mention_actual_param           Mention_param_value
+   ...    MESSAGE                        OTP_SEND_SUCCESS
+   ...    STATUS                         SUCCESS
 
-    #    1. Send request: POST /api/auth/crm/delete/basic/customer
-	#    2. Verify response status code: 200
+POST /api/auth/otp/verify - Success
+    [Documentation]    Send request with correct data and verify response and status code
+    [Tags]    Login    Dashboard    Regression
+    [Template]    POST /api/auth/otp/verify
 
-    ${request_headers}=    Backend_CommonKeywords.CRM_Token_Headers
-    ${response}=    Backend_CommonKeywords.Calling_API_POST    POST    ${BACKEND_URL}/api/auth/admin/delete/basic/customer    200     ${ONBOARDING_DELETE_USER}    ${request_headers}    ${timeout}
-    
-    #    3. Verify json response body message: STATUS: SUCCESS
+    ${ONBOARDING_OTP_VALIDATE}    200
+    ...    Mention_actual_param           Mention_param_value
+    ...    MESSAGE                        OTP_VERIFICATION_SUCCESS
+    ...    STATUS                         SUCCESS
 
-    Backend_CommonKeywords.Validating_Response_Message    ${response.content}    STATUS    SUCCESS
+POST /api/auth/nic/validate - Success
+    [Documentation]    Send request with correct data and verify response and status code
+    [Tags]    Login    Dashboard    Regression
+    [Template]    POST /api/auth/nic/validate
 
-    
+    ${ONBOARDING_NIC_VALIDATE}    200
+    ...    Mention_actual_param           Mention_param_value
+    ...    MESSAGE                        FINTECH_USER_NOT_FOUND
+    ...    STATUS                         SUCCESS
+
+POST /api/auth/pin - Fail
+    [Documentation]    Send request with pin mismatch
+    [Tags]    Login    Dashboard    Regression
+    [Template]    POST /api/auth/pin
+
+    ${ONBOARDING_PIN_CREATE_PIN_MISMATCHING}    200
+    ...    Mention_actual_param           Mention_param_value
+    ...    MESSAGE                        PIN_MISMATCHING
+    ...    STATUS                         FAILED
+    ...    ERROR_DESCRIPTION              PINs do not match
+
+POST /api/auth/pin - Success
+    [Documentation]    Send request with correct data and verify response and status code
+    [Tags]    Login    Dashboard    Regression
+    [Template]    POST /api/auth/pin
+
+    ${ONBOARDING_PIN_CREATE}    200
+    ...    Mention_actual_param           Mention_param_value
+    ...    MESSAGE                        PIN_GENERATE_SUCCESS
+    ...    STATUS                         SUCCESS
+
+POST /api/auth/oauth/token - Success
+    [Documentation]    Send request with correct data and verify response and status code
+    [Tags]    Login    Dashboard    Regression
+    [Template]    POST /api/auth/oauth/token
+
+    ${ONBOARDING_ACCESS_TOKEN}    200
+    ...    Mention_actual_param           Mention_param_value
+    ...    token_type                     bearer
+    ...    scope                          read
+
+Deleting_user_from DB_after_user_creation
+    [Documentation]    
+    ...    Removing data from fintech_user_status table
+    ...    Removing data from fintech_users table
+    ...    Removing data from otp_requests table
+    ...    Removing data from pin_otp_requests table
+    ...    Removing data from user_token table
+    ...    Removing data from pins table
+
+    [Tags]    Login    Dashboard    Regression    DB
+
+    Execute SQL String    DELETE FROM fintech_user_status WHERE mobile_number = '${ONBOARDING_MOBILE_NUMBER}'
+    Execute SQL String    DELETE FROM fintech_users WHERE mobile_number = '${ONBOARDING_MOBILE_NUMBER}'
+    Execute SQL String    DELETE FROM otp_requests WHERE mobile_number = '${ONBOARDING_MOBILE_NUMBER}'
+    Execute SQL String    DELETE FROM pin_otp_requests WHERE mobile_number = '${ONBOARDING_MOBILE_NUMBER}'
+    Execute SQL String    DELETE FROM user_token WHERE mobile_number = '${ONBOARDING_MOBILE_NUMBER}'
+    Execute SQL String    DELETE FROM pins WHERE nic = '${ONBOARDING_NIC}'

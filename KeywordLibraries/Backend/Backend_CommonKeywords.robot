@@ -41,12 +41,6 @@ Token_Headers
 CRM_Token_Headers
     ${request_headers}=    Create Dictionary    Content-Type=application/json    Authorization=Bearer ${CRM_TOKEN}
     [Return]    ${request_headers}
-
-Validating_Response_Message
-    [Arguments]    ${actual_response}    ${parameter_name}    ${expected_value}
-    ${response_dict}=    Evaluate    json.loads($actual_response)    json
-    ${actual_parameter_value}=    Get From Dictionary    ${response_dict}    ${parameter_name}
-    Should Be Equal As Strings    ${actual_parameter_value}    ${expected_value}
     
 Response_Logs
     [Arguments]    ${status_code}    ${content}
@@ -124,6 +118,12 @@ Capture_Access_Token_If_Available
     ${data_otp_verify}=    Set Variable If    '${json_data.get("access_token")}' != 'None'    ${json_data["access_token"]}    None
     [Return]    ${data_otp_verify}
 
+Validating_Response_Message
+    [Arguments]    ${actual_response}    ${parameter_name}    ${expected_value}
+    ${response_dict}=    Evaluate    json.loads($actual_response)    json
+    ${actual_parameter_value}=    Get From Dictionary    ${response_dict}    ${parameter_name}
+    Should Be Equal As Strings    ${actual_parameter_value}    ${expected_value}
+
 Response_Validation_Parameters
     [Arguments]    ${response_content}    @{expected_values}
     ${length}=    Get Length    ${expected_values}
@@ -132,3 +132,4 @@ Response_Validation_Parameters
         ${expected_value}=    Set Variable    ${expected_values}[${index + 1}]
         Backend_CommonKeywords.Validating_Response_Message    ${response_content}    ${expected_param}    ${expected_value}
         END
+    [Return]    ${response_content}

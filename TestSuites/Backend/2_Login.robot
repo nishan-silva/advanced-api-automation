@@ -107,6 +107,13 @@ POST /api/auth/oauth/token
 *** Test Cases ***
 
 Resetting_User_Status
+    [Documentation]    
+    ...    Reset the user before starting the test.
+    ...    Set fintech user status to 5
+    ...    Set pin attempt count to 0
+    ...    Update created date in to old date
+    ...    Set pin otp request count to 0
+    
     [Tags]    Login    Dashboard    Regression    DB
     Execute SQL String    UPDATE fintech_user_status SET status = '5' WHERE mobile_number = '${LOGIN_MOBILE_NUMBER}'
     Execute SQL String    UPDATE pins SET pin_attempt_count = '0' WHERE nic = '${LOGIN_NIC}'
@@ -115,7 +122,7 @@ Resetting_User_Status
     Execute SQL String    UPDATE pin_otp_requests SET otp_request_count = '0' WHERE mobile_number = '${LOGIN_MOBILE_NUMBER}'
 
 POST /api/auth/otp/request - Fail - Invalid mandatory parameters
-    [Documentation]    Failure
+    [Documentation]    Send request with invalid mobile number and verifing response
     [Tags]    Login    Dashboard    Regression
     [Template]    POST /api/auth/otp/request
     
@@ -126,6 +133,7 @@ POST /api/auth/otp/request - Fail - Invalid mandatory parameters
     ...    ERROR_DESCRIPTION              Invalid mobile number
 
 POST /api/auth/otp/request - Success
+    [Documentation]    Send request with correct data and verify response and status code
     [Tags]    Login    Dashboard    Regression
     [Template]    POST /api/auth/otp/request
 
@@ -135,6 +143,13 @@ POST /api/auth/otp/request - Success
    ...    STATUS                         SUCCESS
 
 POST /api/auth/otp/verify - Fail
+    [Documentation]
+    ...    Send request with 1st invalid OTP request and status code
+    ...    Send request with 2nd invalid OTP request and status code
+    ...    Send request with 3rd invalid OTP request and status code
+    ...    Send request with invalid mobile number and status code
+    ...    Send request with different device ID and status code
+
     [Tags]    Login    Dashboard    Regression
     [Template]    POST /api/auth/otp/verify
 
@@ -170,18 +185,16 @@ POST /api/auth/otp/verify - Fail
     ...    STATUS                         FAILED
     
 POST /api/auth/otp/request - Fail - OTP already requested
+    [Documentation]    Send request again during the 1 minuite
     [Tags]    Login    Dashboard    Regression
     [Template]    POST /api/auth/otp/request
-
-    #    1. Send request: POST /api/auth/otp/request
-	#    2. Verify response status code: 200
-    #    3. Verify MESSAGE value OTP_ALREADY_REQUESTED
     
     ${LOGIN_OTP_REQUEST}    200
     ...    Mention_actual_param           Mention_param_value
     ...    STATUS                         FAILED
     
 POST /api/auth/otp/verify - Fail - OTP Expired
+    [Documentation]    Send request after one minuite
     [Tags]    Login    Dashboard    Regression
     [Template]    POST /api/auth/otp/verify
 
@@ -190,6 +203,7 @@ POST /api/auth/otp/verify - Fail - OTP Expired
     ...    MESSAGE                        OTP_EXPIRED
     
 Resend POST /api/auth/otp/request
+    [Documentation]    Resend request after one minuite
     [Tags]    Login    Dashboard    Regression
     [Template]    POST /api/auth/otp/request
 
@@ -198,6 +212,7 @@ Resend POST /api/auth/otp/request
     ...    MESSAGE                        OTP_SEND_SUCCESS
 
 POST /api/auth/otp/verify - Success
+    [Documentation]    Send request with correct data
     [Tags]    Login    Dashboard    Regression
     [Template]    POST /api/auth/otp/verify
 
@@ -207,6 +222,11 @@ POST /api/auth/otp/verify - Success
     ...    STATUS                         SUCCESS
 
 POST /api/auth/nic/validate - Fail
+    [Documentation]    
+    ...    Send request with and NIC which has been tagged with other mobile number
+    ...    Send request with different device ID
+    ...    Send request with invalid NIC number
+    
     [Tags]    Login    Dashboard    Regression
     [Template]    POST /api/auth/nic/validate
 
@@ -227,6 +247,7 @@ POST /api/auth/nic/validate - Fail
     ...    ERROR_DESCRIPTION              Invalid NIC number
 
 POST /api/auth/nic/validate - Success
+    [Documentation]    Send request with correct data
     [Tags]    Login    Dashboard    Regression
     [Template]    POST /api/auth/nic/validate
 
@@ -238,6 +259,13 @@ POST /api/auth/nic/validate - Success
     ...    IS_CUSTOMER_EMAIL_AVAILABLE    False
 
 POST /api/auth/oauth/token - Fail
+    [Documentation]    
+    ...    Send request with incorrect grant type
+    ...    Send request with incorrect client credentials
+    ...    Send request with incorrect 1st PIN
+    ...    Send request with incorrect 2nd PIN
+    ...    Send request with incorrect 3rd PIN
+    
     [Tags]    Login    Dashboard    Regression
     [Template]    POST /api/auth/oauth/token
 
@@ -256,22 +284,24 @@ POST /api/auth/oauth/token - Fail
     ...    error                          invalid_request
     ...    error_description              Invalid PIN. 02 more attempts remaining
 
-        ${LOGIN_ACCESS_TOKEN_INVALID_PIN}    401
+    ${LOGIN_ACCESS_TOKEN_INVALID_PIN}    401
     ...    Mention_actual_param           Mention_param_value
     ...    error                          invalid_request
     ...    error_description              Invalid PIN. Next invalid attempt will block you.
 
-        ${LOGIN_ACCESS_TOKEN_INVALID_PIN}    401
+    ${LOGIN_ACCESS_TOKEN_INVALID_PIN}    401
     ...    error                          invalid_request
     ...    error_description              Your account has been blocked due to multiple failed attempts.|60
 
 Resetting_User_Status_After_PIN_Block
+    [Documentation]    Reset user status after pin block
     [Tags]    Login    Dashboard    Regression    DB
     Query    SELECT * FROM fintech_user_status WHERE mobile_number = '${LOGIN_MOBILE_NUMBER}';
     Execute SQL String    UPDATE fintech_user_status SET status = '5' WHERE mobile_number = '${LOGIN_MOBILE_NUMBER}'
     Execute SQL String    UPDATE pins SET pin_attempt_count = '0' WHERE nic = '${LOGIN_NIC}'
 
 POST /api/auth/oauth/token - Success
+    [Documentation]    FailureSend request with correct data
     [Tags]    Login    Dashboard    Regression
     [Template]    POST /api/auth/oauth/token
 
