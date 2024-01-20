@@ -28,7 +28,7 @@ POST /api/auth/otp/request
 	#    2. Verify response status code: 200
 
         ${request_headers}=    Backend_CommonKeywords.Onboarding_Headers
-	    ${response}=    Backend_CommonKeywords.Calling_API_POST    POST    ${BACKEND_URL}/api/auth/otp/request    ${expected_status_code}    ${data}    ${request_headers}    ${TIMEOUT}
+	    ${response}=    Backend_CommonKeywords.Calling_API_POST    ${BACKEND_URL}/api/auth/otp/request    ${expected_status_code}    ${data}    ${request_headers}    ${TIMEOUT}
         Response Logs    ${response.status_code}    ${response.content}
 
     #    3. Call the keyword to validate the response parameter and its expected value
@@ -56,7 +56,7 @@ POST /api/auth/otp/verify
 	#    2. Verify response status code: 200
 
     ${request_headers}=    Backend_CommonKeywords.Onboarding_Headers
-    ${response}=    Backend_CommonKeywords.Calling_API_POST    POST    ${BACKEND_URL}/api/auth/otp/verify     ${expected_status_code}    ${data}    ${request_headers}    ${TIMEOUT}
+    ${response}=    Backend_CommonKeywords.Calling_API_POST    ${BACKEND_URL}/api/auth/otp/verify     ${expected_status_code}    ${data}    ${request_headers}    ${TIMEOUT}
     ${DATA_OTP_VERIFY_ONBOARDING}=    Capture_DATA_If_Available    ${response}  # Capture OTP data from the response if available
     Set Global Variable    ${DATA_OTP_VERIFY_ONBOARDING}
 
@@ -77,7 +77,7 @@ POST /api/auth/nic/validate
 
     Run Keyword If    "${DATA_OTP_VERIFY_ONBOARDING}" != "None"    Set To Dictionary    ${data}    request_token=${DATA_OTP_VERIFY_ONBOARDING}
     ${request_headers}=    Backend_CommonKeywords.Onboarding_Headers
-    ${response}=    Backend_CommonKeywords.Calling_API_POST    POST    ${BACKEND_URL}/api/auth/nic/validate    ${expected_status_code}    ${data}       ${request_headers}    ${TIMEOUT}
+    ${response}=    Backend_CommonKeywords.Calling_API_POST    ${BACKEND_URL}/api/auth/nic/validate    ${expected_status_code}    ${data}       ${request_headers}    ${TIMEOUT}
     ${DATA_NIC_VERIFY_ONBOARDING}=    Capture DATA If Available    ${response}  # Capture OTP data from the response if available
     Set Global Variable    ${DATA_NIC_VERIFY_ONBOARDING}
 
@@ -98,7 +98,7 @@ POST /api/auth/pin
 
     Run Keyword If    "${DATA_NIC_VERIFY_ONBOARDING}" != "None"    Set To Dictionary    ${data}    request_token=${DATA_NIC_VERIFY_ONBOARDING}
     ${request_headers}=    Backend_CommonKeywords.Onboarding_Headers
-    ${response}=    Backend_CommonKeywords.Calling_API_POST    POST    ${BACKEND_URL}/api/auth/pin    ${expected_status_code}    ${data}       ${request_headers}    ${TIMEOUT}
+    ${response}=    Backend_CommonKeywords.Calling_API_POST    ${BACKEND_URL}/api/auth/pin    ${expected_status_code}    ${data}       ${request_headers}    ${TIMEOUT}
     ${DATA_PIN_VERIFY}=    Capture DATA If Available    ${response}  # Capture OTP data from the response if available
     Set Global Variable    ${DATA_PIN_VERIFY}
 
@@ -119,7 +119,7 @@ POST /api/auth/oauth/token
 
     Run Keyword If    "${DATA_NIC_VERIFY_ONBOARDING}" != "None"    Set To Dictionary    ${data}    request_token=${DATA_NIC_VERIFY_ONBOARDING}
     ${request_headers}=    Backend_CommonKeywords.Onboarding_Headers
-    ${response}=    Backend_CommonKeywords.Calling_API_POST    POST    ${BACKEND_URL}/api/auth/oauth/token    ${expected_status_code}    ${data}    ${request_headers}    ${TIMEOUT}
+    ${response}=    Backend_CommonKeywords.Calling_API_POST    ${BACKEND_URL}/api/auth/oauth/token    ${expected_status_code}    ${data}    ${request_headers}    ${TIMEOUT}
     ${APP_TOKEN_ONBOARDING}=    Capture access token If Available    ${response}  # Capture OTP data from the response if available
     Set Global Variable    ${APP_TOKEN_ONBOARDING}
 

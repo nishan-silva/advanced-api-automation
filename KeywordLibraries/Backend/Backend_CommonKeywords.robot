@@ -18,15 +18,15 @@ ${CRM_TOKEN}
 *** Keywords ***
 
 Calling_API_POST
-    [Arguments]    ${method}    ${endpoint}    ${expected_status_code}    ${data}    ${headers}    ${timeout}
-    ${response}=    Run Keyword    RequestsLibrary.${method}    ${endpoint}    json=${data}    expected_status=${expected_status_code}     headers=${headers}    timeout=${TIMEOUT}
+    [Arguments]    ${endpoint}    ${expected_status_code}    ${data}    ${headers}    ${timeout}
+    ${response}=    Run Keyword    RequestsLibrary.POST    ${endpoint}    json=${data}    expected_status=${expected_status_code}     headers=${headers}    timeout=${TIMEOUT}
     ${parsed_response}=     Set Variable    ${response.json()}
     Should Be Equal As Strings    ${response.status_code}    ${expected_status_code}
     [Return]    ${response}
 
 Calling_API_GET
-    [Arguments]    ${method}    ${endpoint}    ${expected_status_code}   ${headers}    ${timeout}
-    ${response}=    Run Keyword    RequestsLibrary.${method}    ${endpoint}   headers=${headers}    timeout=${TIMEOUT}
+    [Arguments]    ${endpoint}    ${expected_status_code}   ${headers}    ${timeout}
+    ${response}=    Run Keyword    RequestsLibrary.GET    ${endpoint}   headers=${headers}    timeout=${TIMEOUT}
     Should Be Equal As Strings    ${response.status_code}    ${expected_status_code}
     [Return]    ${response}
 

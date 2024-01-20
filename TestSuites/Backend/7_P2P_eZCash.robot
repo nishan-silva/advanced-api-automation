@@ -20,7 +20,7 @@ POST /api/beneficiary/p2p/beneficiary
 	#    2. Verify response status code: 200
 
     ${request_headers}=    Backend_CommonKeywords.Token_Headers
-    ${response}=    Backend_CommonKeywords.Calling_API_GET    GET    ${BACKEND_URL}/api/beneficiary/p2p/beneficiary    200    ${request_headers}    ${timeout}
+    ${response}=    Backend_CommonKeywords.Calling_API_GET    ${BACKEND_URL}/api/beneficiary/p2p/beneficiary    200    ${request_headers}    ${timeout}
 
     #    3. Verify json response body message: STATUS: SUCCESS
 
@@ -33,7 +33,7 @@ POST /api/tokenization/p2p/sof
 	#    2. Verify response status code: 200
 
     ${request_headers}=    Backend_CommonKeywords.Token_Headers
-    ${response}=    Backend_CommonKeywords.Calling_API_GET    GET    ${BACKEND_URL}/api/tokenization/p2p/sof    200    ${request_headers}    ${timeout}
+    ${response}=    Backend_CommonKeywords.Calling_API_GET    ${BACKEND_URL}/api/tokenization/p2p/sof    200    ${request_headers}    ${timeout}
 
     #    3. Verify json response body message: STATUS: SUCCESS
 
@@ -50,7 +50,7 @@ POST /api/tokenization/p2p/txn/request
 	#    2. Verify response status code: 200
 
     ${request_headers}=    Backend_CommonKeywords.Token_Headers
-    ${response}=    Backend_CommonKeywords.Calling_API_POST    POST    ${BACKEND_URL}/api/tokenization/p2p/txn/request   200    ${P2P_EZCASH_TXN_REQUEST}    ${request_headers}    ${timeout}
+    ${response}=    Backend_CommonKeywords.Calling_API_POST    ${BACKEND_URL}/api/tokenization/p2p/txn/request   200    ${P2P_EZCASH_TXN_REQUEST}    ${request_headers}    ${timeout}
 
     #    3. Verify json response body message: STATUS: SUCCESS
 
@@ -78,7 +78,7 @@ POST /api/ezcash/p2p/payment
 	#    2. Verify response status code: 200
 
     ${request_headers}=    Backend_CommonKeywords.Token_Headers
-    ${response}=    Backend_CommonKeywords.Calling_API_POST    POST    ${BACKEND_URL}/api/ezcash/p2p/payment   200    ${P2P_EZCASH_TXN}    ${request_headers}    ${timeout}
+    ${response}=    Backend_CommonKeywords.Calling_API_POST    ${BACKEND_URL}/api/ezcash/p2p/payment   200    ${P2P_EZCASH_TXN}    ${request_headers}    ${timeout}
 
     #    3. Verify json response body message: STATUS: SUCCESS
 

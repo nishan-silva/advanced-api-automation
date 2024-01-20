@@ -19,7 +19,7 @@ POST /api/tokenization/qr/sof
 	#    2. Verify response status code: 200
 
     ${request_headers}=    Backend_CommonKeywords.Token_Headers
-    ${response}=    Backend_CommonKeywords.Calling_API_POST    POST    ${BACKEND_URL}/api/tokenization/qr/sof    200    ${SCAN_QR}    ${request_headers}    ${timeout}
+    ${response}=    Backend_CommonKeywords.Calling_API_POST    ${BACKEND_URL}/api/tokenization/qr/sof    200    ${SCAN_QR}    ${request_headers}    ${timeout}
 
     #    3. Verify json response body message: STATUS: SUCCESS
 
@@ -37,7 +37,7 @@ POST /api/ezcash/lankaqr/payment
 	#    3. Verify response status code: 200
 
     ${request_headers}=    Backend_CommonKeywords.Token_Headers
-    ${response}=    Backend_CommonKeywords.Calling_API_POST    POST    ${BACKEND_URL}/api/ezcash/lankaqr/payment    200    ${SCAN_QR_EZCASH}    ${request_headers}    ${timeout}
+    ${response}=    Backend_CommonKeywords.Calling_API_POST    ${BACKEND_URL}/api/ezcash/lankaqr/payment    200    ${SCAN_QR_EZCASH}    ${request_headers}    ${timeout}
 
     #    4. Verify json response body message: STATUS: SUCCESS
 

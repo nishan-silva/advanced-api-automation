@@ -20,7 +20,7 @@ GET /api/genie/profile/check - Success
 	#    2. Verify response status code: 200
 
     ${request_headers}=    Backend_CommonKeywords.Token_Headers
-    ${response}=    Backend_CommonKeywords.Calling_API_GET    GET    ${BACKEND_URL}/api/genie/profile/check    200    ${request_headers}    ${timeout}
+    ${response}=    Backend_CommonKeywords.Calling_API_GET    ${BACKEND_URL}/api/genie/profile/check    200    ${request_headers}    ${timeout}
 
     #    3. Verify json response body message: STATUS: SUCCESS
 
@@ -33,7 +33,7 @@ GET /api/justpay/eligibility - Success
 	#    2. Verify response status code: 200
 
     ${request_headers}=    Backend_CommonKeywords.Token_Headers
-    ${response}=    Backend_CommonKeywords.Calling_API_GET    GET    ${BACKEND_URL}/api/justpay/eligibility   200    ${request_headers}    ${timeout}
+    ${response}=    Backend_CommonKeywords.Calling_API_GET    ${BACKEND_URL}/api/justpay/eligibility   200    ${request_headers}    ${timeout}
 
     #    3. Verify json response body message: STATUS: SUCCESS
 
@@ -47,7 +47,7 @@ GET /api/ezcash/payout/centers?longitude=0.0&latitude=0.0&distance=0 - Success
 	#    2. Verify response status code: 200
 
     ${request_headers}=    Backend_CommonKeywords.Token_Headers
-    ${response}=    Backend_CommonKeywords.Calling_API_GET    GET    ${BACKEND_URL}/api/ezcash/payout/centers?longitude=0.0&latitude=0.0&distance=0   200    ${request_headers}    ${timeout}
+    ${response}=    Backend_CommonKeywords.Calling_API_GET    ${BACKEND_URL}/api/ezcash/payout/centers?longitude=0.0&latitude=0.0&distance=0   200    ${request_headers}    ${timeout}
 
     #    3. Verify json response body message: STATUS: SUCCESS
 
@@ -61,7 +61,7 @@ GET /api/tokenization/all/sof - Success
 	#    2. Verify response status code: 200
 
     ${request_headers}=    Backend_CommonKeywords.Token_Headers
-    ${response}=    Backend_CommonKeywords.Calling_API_GET    GET    ${BACKEND_URL}/api/tokenization/all/sof   200    ${request_headers}    ${timeout}
+    ${response}=    Backend_CommonKeywords.Calling_API_GET    ${BACKEND_URL}/api/tokenization/all/sof   200    ${request_headers}    ${timeout}
 
     #    3. Verify json response body message: STATUS: SUCCESS
 
@@ -76,7 +76,7 @@ POST /api/auth/change/language - Success
 	#    2. Verify response status code: 200
 
     ${request_headers}=    Backend_CommonKeywords.Token_Headers
-    ${response}=    Backend_CommonKeywords.Calling_API_POST    POST    ${BACKEND_URL}/api/auth/change/language    200    ${LANGUAGE_CHANGE}    ${request_headers}   ${TIMEOUT}
+    ${response}=    Backend_CommonKeywords.Calling_API_POST    ${BACKEND_URL}/api/auth/change/language    200    ${LANGUAGE_CHANGE}    ${request_headers}   ${TIMEOUT}
     Response Logs    ${response.status_code}    ${response.content}
 
     #    3. Verify json response body message: MESSAGE: OTP_SEND_SUCCESS
