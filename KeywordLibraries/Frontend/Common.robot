@@ -55,30 +55,30 @@ Scroll Down
 Login_Device_1
     [Arguments]    ${permission_button_text}    ${language_button_text}    ${select_skip_or_proceed}    ${select_skip}    ${mobile_no}    ${button_text_continue}    ${enter_otp_value}    ${enter_nic_value}    ${select_continue}
     Open_Genie_App_Device_1
-    Select_permission    ${permission_button_text}
-    Select_language    ${language_button_text}
-    Select_skip_button_in_Referral_page    ${select_skip_or_proceed}
-    Welcome_Screen    ${select_skip}
-    Enter_Mobile_Number    ${mobile_no}
-    Check_Terms_And_Conditions
-    Cilck_Continue_Button    ${button_text_continue}
-    Enter_OTP    ${enter_otp_value}
-    Enter_NIC    ${enter_nic_value}    ${select_continue}
-    Enter_PIN
+    Permission_Can_Be_Allowed_Or_Denied    ${button_text_permisson_allow}
+    Language_Can_Be_Selected    ${button_text_language_english}
+    Skip_Button_Can_Be_Selected_in_Referral_Screen    ${button_text_skip}
+    Welcome_Screen_Should_Be_Visible    ${button_text_skip}
+    Mobile_Number_Can_Be_Entered_In_The_Mobile_Number_Enter_Screen    ${MOBILE_NUMBER} 
+    Check_Box_Can_Be_Selected_In_The_Mobile_Number_Enter_Screen
+    Continue_Button_Can_Be_Selected_In_The_Mobile_Number_Enter_Screen    ${button_text_continue}
+    OTP_Can_Be_Enterd_In_OTP_Enter_Screen    ${OTP}
+    NIC_Can_Be_Enterd_In_NIC_Enter_Screen    ${NIC}    ${button_text_continue}
+    PIN_Can_Be_Enterd_In_PIN_Enter_Screen
 
 Login_Device_2
     [Arguments]    ${permission_button_text}    ${language_button_text}    ${select_skip_or_proceed}    ${select_skip}    ${mobile_no}    ${button_text_continue}    ${enter_otp_value}    ${enter_nic_value}    ${select_continue}
     Open_Genie_App_Device_2
-    Select_permission    ${permission_button_text}
-    Select_language    ${language_button_text}
-    Select_skip_button_in_Referral_page    ${select_skip_or_proceed}
-    Welcome_Screen    ${select_skip}
-    Enter_Mobile_Number    ${mobile_no}
-    Check_Terms_And_Conditions
-    Cilck_Continue_Button    ${button_text_continue}
-    Enter_OTP    ${enter_otp_value}
-    Enter_NIC    ${enter_nic_value}    ${select_continue}
-    Enter_PIN
+    Permission_Can_Be_Allowed_Or_Denied    ${button_text_permisson_allow}
+    Language_Can_Be_Selected    ${button_text_language_english}
+    Skip_Button_Can_Be_Selected_in_Referral_Screen    ${button_text_skip}
+    Welcome_Screen_Should_Be_Visible    ${button_text_skip}
+    Mobile_Number_Can_Be_Entered_In_The_Mobile_Number_Enter_Screen    ${MOBILE_NUMBER} 
+    Check_Box_Can_Be_Selected_In_The_Mobile_Number_Enter_Screen
+    Continue_Button_Can_Be_Selected_In_The_Mobile_Number_Enter_Screen    ${button_text_continue}
+    OTP_Can_Be_Enterd_In_OTP_Enter_Screen    ${OTP}
+    NIC_Can_Be_Enterd_In_NIC_Enter_Screen    ${NIC}    ${button_text_continue}
+    PIN_Can_Be_Enterd_In_PIN_Enter_Screen
     
 Uninstall APK
     ${package_name}=    Set Variable    ${APP_PACKAGE}   # Replace with your package name
