@@ -47,6 +47,9 @@ Robot Framework is a generic open source test automation framework. In addition 
     pip install robotframework-jsonlibrary
     pip install robotframework-seleniumlibrary
     pip install robotframework-appiumlibrary
+    pip install robotframework-databaselibrary
+    pip install psycopg2
+    pip install cx_Oracle
 
 **Settingup python environment variables**
 
