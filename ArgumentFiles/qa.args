@@ -2,3 +2,6 @@
 --variable ENV_BACKEND_PROTOCOL:http
 --variable ENV_BACKEND_HOST:abc.com
 --variable ENV_BACKEND_PORT:8080
+--variable ENV_GENIE_DB_CONFIG_FILE:Configuration/GenieQADbConfig.cfg
+--variable ENV_EZCASH_DB_CONFIG_FILE:Configuration/eZCashStagingDbConfig.cfg
+--variable ENV_DB_DATA_FILE:TestData/QA_Backend_TestData.py

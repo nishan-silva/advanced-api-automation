@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation       Test Genie Onboarding API's
 
-Suite Setup         DatabaseKeywords.Connecting_To_Database
+Suite Setup         DatabaseKeywords.Connecting_To_Genie_Database
 Suite Teardown      Disconnect From Database
 
 Library    RequestsLibrary    #https://marketsquare.github.io/robotframework-requests/doc/RequestsLibrary.html#library-documentation-top
@@ -138,18 +138,13 @@ Deleting_user_if_available
     ...    Removing data from user_token table
     ...    Removing data from pins table
 
-    [Tags]    Login    Dashboard    Regression    DB
+    [Tags]    Onboarding    Regression    DB
 
-    Execute SQL String    DELETE FROM fintech_user_status WHERE mobile_number = '${ONBOARDING_MOBILE_NUMBER}'
-    Execute SQL String    DELETE FROM fintech_users WHERE mobile_number = '${ONBOARDING_MOBILE_NUMBER}'
-    Execute SQL String    DELETE FROM otp_requests WHERE mobile_number = '${ONBOARDING_MOBILE_NUMBER}'
-    Execute SQL String    DELETE FROM pin_otp_requests WHERE mobile_number = '${ONBOARDING_MOBILE_NUMBER}'
-    Execute SQL String    DELETE FROM user_token WHERE mobile_number = '${ONBOARDING_MOBILE_NUMBER}'
-    Execute SQL String    DELETE FROM pins WHERE nic = '${ONBOARDING_NIC}'
+    Deleting_user_if_available
 
 POST /api/auth/otp/request - Success
     [Documentation]    Send request with correct data and verify response and status code
-    [Tags]    Login    Dashboard    Regression
+    [Tags]    Onboarding    Regression
     [Template]    POST /api/auth/otp/request
 
    ${ONBOARDING_OTP_REQUEST}    200
@@ -159,7 +154,7 @@ POST /api/auth/otp/request - Success
 
 POST /api/auth/otp/verify - Success
     [Documentation]    Send request with correct data and verify response and status code
-    [Tags]    Login    Dashboard    Regression
+    [Tags]    Onboarding    Regression
     [Template]    POST /api/auth/otp/verify
 
     ${ONBOARDING_OTP_VALIDATE}    200
@@ -169,7 +164,7 @@ POST /api/auth/otp/verify - Success
 
 POST /api/auth/nic/validate - Success
     [Documentation]    Send request with correct data and verify response and status code
-    [Tags]    Login    Dashboard    Regression
+    [Tags]    Onboarding    Regression
     [Template]    POST /api/auth/nic/validate
 
     ${ONBOARDING_NIC_VALIDATE}    200
@@ -179,7 +174,7 @@ POST /api/auth/nic/validate - Success
 
 POST /api/auth/pin - Fail
     [Documentation]    Send request with pin mismatch
-    [Tags]    Login    Dashboard    Regression
+    [Tags]    Onboarding    Regression
     [Template]    POST /api/auth/pin
 
     ${ONBOARDING_PIN_CREATE_PIN_MISMATCHING}    200
@@ -190,7 +185,7 @@ POST /api/auth/pin - Fail
 
 POST /api/auth/pin - Success
     [Documentation]    Send request with correct data and verify response and status code
-    [Tags]    Login    Dashboard    Regression
+    [Tags]    Onboarding    Regression
     [Template]    POST /api/auth/pin
 
     ${ONBOARDING_PIN_CREATE}    200
@@ -200,7 +195,7 @@ POST /api/auth/pin - Success
 
 POST /api/auth/oauth/token - Success
     [Documentation]    Send request with correct data and verify response and status code
-    [Tags]    Login    Dashboard    Regression
+    [Tags]    Onboarding    Regression
     [Template]    POST /api/auth/oauth/token
 
     ${ONBOARDING_ACCESS_TOKEN}    200
@@ -217,11 +212,8 @@ Deleting_user_from DB_after_user_creation
     ...    Removing data from user_token table
     ...    Removing data from pins table
 
-    [Tags]    Login    Dashboard    Regression    DB
+    [Tags]    Onboarding    Regression    DB
 
-    Execute SQL String    DELETE FROM fintech_user_status WHERE mobile_number = '${ONBOARDING_MOBILE_NUMBER}'
-    Execute SQL String    DELETE FROM fintech_users WHERE mobile_number = '${ONBOARDING_MOBILE_NUMBER}'
-    Execute SQL String    DELETE FROM otp_requests WHERE mobile_number = '${ONBOARDING_MOBILE_NUMBER}'
-    Execute SQL String    DELETE FROM pin_otp_requests WHERE mobile_number = '${ONBOARDING_MOBILE_NUMBER}'
-    Execute SQL String    DELETE FROM user_token WHERE mobile_number = '${ONBOARDING_MOBILE_NUMBER}'
-    Execute SQL String    DELETE FROM pins WHERE nic = '${ONBOARDING_NIC}'
+    Deleting_user_if_available
+
+

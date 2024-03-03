@@ -3,14 +3,14 @@ Library             DatabaseLibrary    #https://docs.robotframework.org/docs/dif
 Library             OperatingSystem
 Library             Collections
 Library             psycopg2    #https://docs.robotframework.org/docs/different_libraries/database
+Library             cx_Oracle
 
 *** Variables ***
-${DBHost}       localhost
-${DBName}       test
-${DBPass}       admin
-${DBPort}       5432
-${DBUser}       nishan
+
 
 *** Keywords ***
-Connecting_To_Database
-    Connect To Database    psycopg2    ${DBName}    ${DBUser}    ${DBPass}    ${DBHost}    ${DBPort}
+Connecting_To_Genie_Database
+    DatabaseLibrary.Connect To Database    dbConfigFile=${ENV_GENIE_DB_CONFIG_FILE}
+
+Connecting_To_eZCash_Database
+    DatabaseLibrary.Connect To Database    dbConfigFile=${ENV_EZCASH_DB_CONFIG_FILE}

@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation       Test Genie Onboarding API's
 
-Suite Setup         DatabaseKeywords.Connecting_To_Database
+Suite Setup         DatabaseKeywords.Connecting_To_Genie_Database
 Suite Teardown      Disconnect From Database
 
 Library    RequestsLibrary    #https://marketsquare.github.io/robotframework-requests/doc/RequestsLibrary.html#library-documentation-top
@@ -114,7 +114,7 @@ Resetting_User_Status
     ...    Update created date in to old date
     ...    Set pin otp request count to 0
     
-    [Tags]    Login    Dashboard    Regression    DB
+    [Tags]    Login    Regression    DB
     Execute SQL String    UPDATE fintech_user_status SET status = '5' WHERE mobile_number = '${LOGIN_MOBILE_NUMBER}'
     Execute SQL String    UPDATE pins SET pin_attempt_count = '0' WHERE nic = '${LOGIN_NIC}'
     Execute SQL String    UPDATE otp_requests SET request_count = '0' WHERE mobile_number = '${LOGIN_MOBILE_NUMBER}' AND device_id = '${LOGIN_DEVICE_ID}'
@@ -123,7 +123,7 @@ Resetting_User_Status
 
 POST /api/auth/otp/request - Fail - Invalid mandatory parameters
     [Documentation]    Send request with invalid mobile number and verifing response
-    [Tags]    Login    Dashboard    Regression
+    [Tags]    Login    Regression
     [Template]    POST /api/auth/otp/request
     
     ${LOGIN_OTP_REQUEST_INVALID_MOBILE_NUMBER}    200
@@ -134,7 +134,7 @@ POST /api/auth/otp/request - Fail - Invalid mandatory parameters
 
 POST /api/auth/otp/request - Success
     [Documentation]    Send request with correct data and verify response and status code
-    [Tags]    Login    Dashboard    Regression
+    [Tags]    Login    Regression
     [Template]    POST /api/auth/otp/request
 
    ${LOGIN_OTP_REQUEST}    200
@@ -150,7 +150,7 @@ POST /api/auth/otp/verify - Fail
     ...    Send request with invalid mobile number and status code
     ...    Send request with different device ID and status code
 
-    [Tags]    Login    Dashboard    Regression
+    [Tags]    Login    Regression
     [Template]    POST /api/auth/otp/verify
 
     ${LOGIN_OTP_VALIDATE_INVALID_OTP}    200
@@ -186,7 +186,7 @@ POST /api/auth/otp/verify - Fail
     
 POST /api/auth/otp/request - Fail - OTP already requested
     [Documentation]    Send request again during the 1 minuite
-    [Tags]    Login    Dashboard    Regression
+    [Tags]    Login    Regression
     [Template]    POST /api/auth/otp/request
     
     ${LOGIN_OTP_REQUEST}    200
@@ -195,7 +195,7 @@ POST /api/auth/otp/request - Fail - OTP already requested
     
 POST /api/auth/otp/verify - Fail - OTP Expired
     [Documentation]    Send request after one minuite
-    [Tags]    Login    Dashboard    Regression
+    [Tags]    Login    Regression
     [Template]    POST /api/auth/otp/verify
 
     ${LOGIN_OTP_VALIDATE}    200
@@ -204,7 +204,7 @@ POST /api/auth/otp/verify - Fail - OTP Expired
     
 Resend POST /api/auth/otp/request
     [Documentation]    Resend request after one minuite
-    [Tags]    Login    Dashboard    Regression
+    [Tags]    Login    Regression
     [Template]    POST /api/auth/otp/request
 
     ${LOGIN_OTP_REQUEST}    200
@@ -213,7 +213,7 @@ Resend POST /api/auth/otp/request
 
 POST /api/auth/otp/verify - Success
     [Documentation]    Send request with correct data
-    [Tags]    Login    Dashboard    Regression
+    [Tags]    Login    Regression
     [Template]    POST /api/auth/otp/verify
 
     ${LOGIN_OTP_VALIDATE}    200
@@ -227,7 +227,7 @@ POST /api/auth/nic/validate - Fail
     ...    Send request with different device ID
     ...    Send request with invalid NIC number
     
-    [Tags]    Login    Dashboard    Regression
+    [Tags]    Login    Regression
     [Template]    POST /api/auth/nic/validate
 
     ${LOGIN_NIC_VALIDATE_NIC_USED}    200
@@ -248,15 +248,13 @@ POST /api/auth/nic/validate - Fail
 
 POST /api/auth/nic/validate - Success
     [Documentation]    Send request with correct data
-    [Tags]    Login    Dashboard    Regression
+    [Tags]    Login    Regression
     [Template]    POST /api/auth/nic/validate
 
     ${LOGIN_NIC_VALIDATE}    200
     ...    Mention_actual_param           Mention_param_value
     ...    MESSAGE                        FINTECH_USER_AVAILABLE
     ...    STATUS                         SUCCESS
-    ...    IS_CUSTOMER_NAME_AVAILABLE     False
-    ...    IS_CUSTOMER_EMAIL_AVAILABLE    False
 
 POST /api/auth/oauth/token - Fail
     [Documentation]    
@@ -266,7 +264,7 @@ POST /api/auth/oauth/token - Fail
     ...    Send request with incorrect 2nd PIN
     ...    Send request with incorrect 3rd PIN
     
-    [Tags]    Login    Dashboard    Regression
+    [Tags]    Login    Regression
     [Template]    POST /api/auth/oauth/token
 
     ${LOGIN_ACCESS_TOKEN_UNSUPPORTED_GRANT_TYPE}    401
@@ -295,14 +293,14 @@ POST /api/auth/oauth/token - Fail
 
 Resetting_User_Status_After_PIN_Block
     [Documentation]    Reset user status after pin block
-    [Tags]    Login    Dashboard    Regression    DB
+    [Tags]    Login    Regression    DB
     Query    SELECT * FROM fintech_user_status WHERE mobile_number = '${LOGIN_MOBILE_NUMBER}';
     Execute SQL String    UPDATE fintech_user_status SET status = '5' WHERE mobile_number = '${LOGIN_MOBILE_NUMBER}'
     Execute SQL String    UPDATE pins SET pin_attempt_count = '0' WHERE nic = '${LOGIN_NIC}'
 
 POST /api/auth/oauth/token - Success
     [Documentation]    FailureSend request with correct data
-    [Tags]    Login    Dashboard    Regression
+    [Tags]    Login    Regression
     [Template]    POST /api/auth/oauth/token
 
     ${LOGIN_ACCESS_TOKEN}    200
