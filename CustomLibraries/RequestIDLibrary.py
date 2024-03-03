@@ -16,3 +16,4 @@ request_id_generator = RequestIDLibrary()
 # Generate a request ID by calling the method through the instance
 request_id = request_id_generator.generate_request_id()
 print("Generated Request ID:", request_id)
+
